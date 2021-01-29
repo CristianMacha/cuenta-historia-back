@@ -44,27 +44,18 @@ export class AuthService {
   }
 
   async signup(signupDto: signupDto) {
-    const { email, password, birthdate, sexo, username } = signupDto;
-
-    const userdb = await this.userRepository.findByEmail(email);
+    const userdb = await this.userRepository.findByEmail(signupDto.email);
     if (userdb) throw new BadRequestException('El email ya esta registrado.');
 
-    const hashPassword = await encryptPassword(password);
+    const hashPassword = await encryptPassword(signupDto.password);
     const typeUser = this.typeUserRepository.create();
     typeUser.id = 2;
 
-    const newUser = this.userRepository.create();
-    newUser.username = username;
-    newUser.email = email;
-    newUser.password = hashPassword;
-    newUser.sexo = sexo;
-    newUser.birthdate = birthdate;
-    newUser.confirmed = false;
-    newUser.active = true;
-    newUser.google = false;
-    newUser.type_user = typeUser;
-
-    const createdUser = await this.userRepository.save(newUser);
-    return plainToClass(ReadUserDto, createdUser);
+    const createdUser = await this.userRepository.signup(
+      signupDto,
+      hashPassword,
+      typeUser,
+    );
+    return createdUser;
   }
 }

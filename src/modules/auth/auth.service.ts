@@ -30,7 +30,7 @@ export class AuthService {
     const userdb = await this.userRepository.findOne({
       where: { email, active: true },
     });
-    if (userdb) throw new NotFoundException('Credenciales incorrectos.');
+    if (!userdb) throw new NotFoundException('Credenciales incorrectos.');
 
     const isMatchPassword = await comparePassword(password, userdb.password);
     if (!isMatchPassword)
@@ -49,7 +49,7 @@ export class AuthService {
 
     const hashPassword = await encryptPassword(signupDto.password);
     const typeUser = this.typeUserRepository.create();
-    typeUser.id = 2;
+    typeUser.id = 1;
 
     const createdUser = await this.userRepository.signup(
       signupDto,

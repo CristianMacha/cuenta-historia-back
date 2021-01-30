@@ -1,9 +1,7 @@
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsBase64, IsObject, IsString } from 'class-validator';
+import { Category } from 'src/modules/category/category.entity';
 
 export class CreateHistoryDto {
-  @IsNumber()
-  categoryId: number;
-
   @IsString()
   title: string;
 
@@ -12,4 +10,10 @@ export class CreateHistoryDto {
 
   @IsString()
   sinopsis: string;
+
+  @IsObject()
+  category: Category;
+
+  @IsString()
+  img: string;
 }

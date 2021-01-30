@@ -3,34 +3,27 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { JwtService } from '@nestjs/jwt';
 
 import { ResponseSigninDto } from './dto/response-signin.dto';
-import { UserRepository } from '../user/user.repository';
 import { ReadUserDto } from '../user/dto/read-user.dto';
-import { comparePassword, encryptPassword } from './utils/bcrypt';
+import { comparePassword } from './utils/bcrypt';
 import { SigninDto } from './dto/signin.dto';
 import { signupDto } from './dto/signup.dto';
-import { TypeUserRepository } from '../type-user/type-user.repository';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
-    private typeUserRepository: TypeUserRepository,
+    private userServices: UserService,
     private jwtService: JwtService,
   ) {}
 
   async signin(signinDto: SigninDto) {
     const { email, password } = signinDto;
 
-    const userdb = await this.userRepository.findOne({
-      where: { email, active: true },
-      relations: ['type_user'],
-    });
+    const userdb = await this.userServices.getUserByEmail(email);
     if (!userdb) throw new NotFoundException('Credenciales incorrectos.');
 
     const isMatchPassword = await comparePassword(password, userdb.password);
@@ -49,18 +42,10 @@ export class AuthService {
   }
 
   async signup(signupDto: signupDto) {
-    const userdb = await this.userRepository.findByEmail(signupDto.email);
+    const userdb = await this.userServices.getUserByEmail(signupDto.email);
     if (userdb) throw new BadRequestException('El email ya esta registrado.');
 
-    const hashPassword = await encryptPassword(signupDto.password);
-    const typeUser = this.typeUserRepository.create();
-    typeUser.id = 2;
-
-    const createdUser = await this.userRepository.signup(
-      signupDto,
-      hashPassword,
-      typeUser,
-    );
+    const createdUser = await this.userServices.signup(signupDto);
     return createdUser;
   }
 }

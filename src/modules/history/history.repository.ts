@@ -1,5 +1,4 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
 import { CreateHistoryDto } from './dto/create-history.dto';
 
@@ -15,13 +14,21 @@ export class HistoryRepository extends Repository<History> {
   async register(
     createHistoryDto: CreateHistoryDto,
     user: User,
-    category: Category,
+    urlImg: string,
   ) {
     const newHistory = this.create(createHistoryDto);
     newHistory.user = user;
     newHistory.active = true;
-    newHistory.category = category;
+    newHistory.img = urlImg;
     const createdHistory = await this.save(newHistory);
     return createdHistory;
+  }
+
+  async findByUserId(userId: number, active: boolean = true) {
+    const histories = await this.find({
+      where: { user: { id: userId }, active },
+    });
+
+    return histories;
   }
 }

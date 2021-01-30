@@ -1,4 +1,5 @@
-import { IsBoolean, IsEmail, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsObject, IsString } from 'class-validator';
+import { TypeUser } from 'src/modules/type-user/type-user.entity';
 
 export class signupDto {
   @IsString()
@@ -15,4 +16,7 @@ export class signupDto {
 
   @IsString()
   birthdate: Date;
+
+  @IsObject()
+  type_user: TypeUser;
 }

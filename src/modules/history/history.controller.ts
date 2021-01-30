@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
 import { Role } from '../../configs/role.enum';
 import { ValidationDto } from 'src/pipes/validationDto.pipe';
@@ -23,6 +23,14 @@ export class HistoryController {
       createHistoryDto,
       req.user,
     );
+    return response;
+  }
+
+  @Roles(Role.READ)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('my-histories')
+  async getMyHistories(@Req() req) {
+    const response = await this.historyServices.getMyHistories(req.user);
     return response;
   }
 }

@@ -29,6 +29,7 @@ export class AuthService {
 
     const userdb = await this.userRepository.findOne({
       where: { email, active: true },
+      relations: ['type_user'],
     });
     if (!userdb) throw new NotFoundException('Credenciales incorrectos.');
 
@@ -36,7 +37,11 @@ export class AuthService {
     if (!isMatchPassword)
       throw new NotFoundException('Credenciales incorrectos.');
 
-    const payload = { uid: userdb.id, username: userdb.username };
+    const payload = {
+      uid: userdb.id,
+      username: userdb.username,
+      roles: userdb.type_user.name,
+    };
     const token = await this.jwtService.signAsync(payload);
     const user = plainToClass(ReadUserDto, userdb);
 
@@ -49,7 +54,7 @@ export class AuthService {
 
     const hashPassword = await encryptPassword(signupDto.password);
     const typeUser = this.typeUserRepository.create();
-    typeUser.id = 1;
+    typeUser.id = 2;
 
     const createdUser = await this.userRepository.signup(
       signupDto,

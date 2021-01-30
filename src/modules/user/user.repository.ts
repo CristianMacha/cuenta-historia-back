@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { EntityRepository, Repository } from 'typeorm';
 
@@ -6,6 +7,7 @@ import { TypeUser } from '../type-user/type-user.entity';
 import { ReadUserDto } from './dto/read-user.dto';
 import { User } from './user.entity';
 
+@Injectable()
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async findByEmail(email: string) {
@@ -22,5 +24,10 @@ export class UserRepository extends Repository<User> {
 
     const createdUser = await this.save(newUser);
     return plainToClass(ReadUserDto, createdUser);
+  }
+
+  async findById(userId: number) {
+    const userdb = await this.findOne(userId);
+    return userdb;
   }
 }

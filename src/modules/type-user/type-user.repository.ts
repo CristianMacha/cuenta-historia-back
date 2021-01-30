@@ -4,6 +4,7 @@ import { plainToClass } from 'class-transformer';
 import { CreateTypeUserDto } from './dto/create-type-user.dto';
 import { ReadTypeUserDto } from './dto/read-type-user.dto';
 import { TypeUser } from './type-user.entity';
+import { User } from '../user/user.entity';
 
 @EntityRepository(TypeUser)
 export class TypeUserRepository extends Repository<TypeUser> {
@@ -16,5 +17,10 @@ export class TypeUserRepository extends Repository<TypeUser> {
     newTypeUser.active = true;
     const createdTypeUser = await this.save(newTypeUser);
     return plainToClass(ReadTypeUserDto, createdTypeUser);
+  }
+
+  async findById(typUserId: number) {
+    const typeUserdb = await this.findOne(typUserId);
+    return typeUserdb;
   }
 }

@@ -39,7 +39,7 @@ export class History {
   })
   category: Category;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   title: string;
 
   @Column({ nullable: true })
@@ -54,7 +54,7 @@ export class History {
   @Column({ nullable: false, default: true })
   status: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: true })
   active: boolean;
 
   @CreateDateColumn({ type: 'timestamp', nullable: false })

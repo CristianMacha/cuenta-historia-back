@@ -10,5 +10,6 @@ import { UserModule } from '../user/user.module';
   imports: [UserModule, TypeOrmModule.forFeature([HistoryRepository])],
   providers: [HistoryService],
   controllers: [HistoryController],
+  exports: [HistoryService],
 })
 export class HistoryModule {}
